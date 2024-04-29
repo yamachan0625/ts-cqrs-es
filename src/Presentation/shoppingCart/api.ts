@@ -10,7 +10,6 @@ import {
 } from "Domain/Aggregate/ShoppingCart/ShoppingCart";
 import { sendCreated } from "Presentation/api";
 import { EventStoreRepository } from "Infrastructure/eventstore/repository";
-import { getEventStore } from "Infrastructure/eventstore/eventStore";
 
 export const mapShoppingCartStreamId = (id: string) => `shopping_cart-${id}`;
 
@@ -22,7 +21,6 @@ export const shoppingCartApi =
   (
     shoppingCartService: ShoppingCartService = new ShoppingCartService(
       new EventStoreRepository<ShoppingCart, ShoppingCartEvent>(
-        getEventStore(),
         ShoppingCart.default,
         mapShoppingCartStreamId
       )

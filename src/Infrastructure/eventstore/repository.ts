@@ -1,6 +1,6 @@
 import { Aggregate } from "Domain/Aggregate";
 import { Event } from "../../Domain/DomainEvent/events";
-import { EventStore } from "./eventStore";
+import { EventStore, getEventStore } from "./eventStore";
 
 export interface Repository<Entity> {
   find(id: string): Promise<Entity>;
@@ -12,8 +12,9 @@ export class EventStoreRepository<
   StreamEvent extends Event
 > implements Repository<Entity>
 {
+  private eventStore: EventStore = getEventStore();
+
   constructor(
-    private eventStore: EventStore,
     private getInitialState: () => Entity,
     private mapToStreamId: (id: string) => string
   ) {}
