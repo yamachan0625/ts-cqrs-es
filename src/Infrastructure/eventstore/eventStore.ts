@@ -8,6 +8,10 @@ import {
 import { WrongExpectedVersion } from "@eventstore/db-client/generated/shared_pb";
 import { Event } from "../../Domain/DomainEvent/events";
 
+const client = EventStoreDBClient.connectionString(
+  "esdb://127.0.0.1:2113?tls=false"
+);
+
 export interface EventStore {
   aggregateStream<Entity, E extends Event>(
     streamName: string,
@@ -27,7 +31,9 @@ export interface EventStore {
   ): Promise<bigint>;
 }
 
-export const getEventStore = (eventStore: EventStoreDBClient): EventStore => {
+export const getEventStore = (
+  eventStore: EventStoreDBClient = client
+): EventStore => {
   return {
     aggregateStream: async <Entity, E extends Event>(
       streamName: string,

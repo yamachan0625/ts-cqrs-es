@@ -230,7 +230,6 @@ export class ShoppingCart extends Aggregate<ShoppingCartEvent> {
         return;
       }
       default: {
-        const _: never = type;
         throw new Error(ShoppingCartErrors.UNKNOWN_EVENT_TYPE);
       }
     }

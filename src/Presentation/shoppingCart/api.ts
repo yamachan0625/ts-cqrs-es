@@ -5,8 +5,12 @@ import { ShoppingCartService } from "Application/ShoppingCartService/ShoppingCar
 import {
   PricedProductItem,
   ProductItem,
+  ShoppingCart,
+  ShoppingCartEvent,
 } from "Domain/Aggregate/ShoppingCart/ShoppingCart";
 import { sendCreated } from "Presentation/api";
+import { EventStoreRepository } from "Infrastructure/eventstore/repository";
+import { getEventStore } from "Infrastructure/eventstore/eventStore";
 
 export const mapShoppingCartStreamId = (id: string) => `shopping_cart-${id}`;
 
@@ -15,7 +19,16 @@ const dummyPriceProvider = (_productId: string) => {
 };
 
 export const shoppingCartApi =
-  (shoppingCartService: ShoppingCartService) => (router: Router) => {
+  (
+    shoppingCartService: ShoppingCartService = new ShoppingCartService(
+      new EventStoreRepository<ShoppingCart, ShoppingCartEvent>(
+        getEventStore(),
+        ShoppingCart.default,
+        mapShoppingCartStreamId
+      )
+    )
+  ) =>
+  (router: Router) => {
     // Open Shopping cart
     router.post(
       "/clients/:clientId/shopping-carts/",
