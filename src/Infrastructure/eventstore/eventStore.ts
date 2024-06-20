@@ -46,6 +46,8 @@ export const getEventStore = (
       try {
         const { applyEvent, getInitialState, expectedRevision } = options;
 
+        // snapshotから取得できる場合snapshotからエンティティを取得
+        // let state = snapshot ?? getInitialState();
         let state = getInitialState();
         let streamRevision = -1n;
 
@@ -74,6 +76,7 @@ export const getEventStore = (
         throw error;
       }
     },
+
     readStream: async <E extends Event>(streamName: string): Promise<E[]> => {
       const events: E[] = [];
 
@@ -94,6 +97,7 @@ export const getEventStore = (
         throw error;
       }
     },
+
     appendToStream: async <E extends Event>(
       streamId: string,
       events: E[],
