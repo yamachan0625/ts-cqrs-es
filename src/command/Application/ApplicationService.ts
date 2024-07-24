@@ -1,11 +1,11 @@
-import { Repository } from "../Infrastructure/eventstore/repository";
+import { IRepository } from "command/Domain/IRepository";
 
 export abstract class ApplicationService<Entity> {
-  constructor(protected repository: Repository<Entity>) {}
+  constructor(protected repository: IRepository<Entity>) {}
 
-  protected on = async (
+  protected apply = async (
     id: string,
-    handle: (state: Entity) => void | Entity
+    handle: (entity: Entity) => void | Entity
   ) => {
     const aggregate = await this.repository.find(id);
 

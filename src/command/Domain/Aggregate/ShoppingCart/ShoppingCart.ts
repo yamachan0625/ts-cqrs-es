@@ -1,4 +1,4 @@
-import { Event } from "../../DomainEvent/events";
+import { DomainEvent } from "../../DomainEvent/DomainEvent";
 import { Aggregate } from "../../Aggregate";
 import { ShoppingCartErrors } from "./businessLogic";
 
@@ -11,7 +11,7 @@ export type PricedProductItem = ProductItem & {
   unitPrice: number;
 };
 
-export type ShoppingCartOpened = Event<
+export type ShoppingCartOpened = DomainEvent<
   "ShoppingCartOpened",
   {
     shoppingCartId: string;
@@ -20,7 +20,7 @@ export type ShoppingCartOpened = Event<
   }
 >;
 
-export type ProductItemAddedToShoppingCart = Event<
+export type ProductItemAddedToShoppingCart = DomainEvent<
   "ProductItemAddedToShoppingCart",
   {
     shoppingCartId: string;
@@ -28,7 +28,7 @@ export type ProductItemAddedToShoppingCart = Event<
   }
 >;
 
-export type ProductItemRemovedFromShoppingCart = Event<
+export type ProductItemRemovedFromShoppingCart = DomainEvent<
   "ProductItemRemovedFromShoppingCart",
   {
     shoppingCartId: string;
@@ -36,7 +36,7 @@ export type ProductItemRemovedFromShoppingCart = Event<
   }
 >;
 
-export type ShoppingCartConfirmed = Event<
+export type ShoppingCartConfirmed = DomainEvent<
   "ShoppingCartConfirmed",
   {
     shoppingCartId: string;
@@ -44,7 +44,7 @@ export type ShoppingCartConfirmed = Event<
   }
 >;
 
-export type ShoppingCartCanceled = Event<
+export type ShoppingCartCanceled = DomainEvent<
   "ShoppingCartCanceled",
   {
     shoppingCartId: string;

@@ -1,6 +1,6 @@
-import { Event } from "./DomainEvent/events";
+import { DomainEvent } from "./DomainEvent/DomainEvent";
 
-export abstract class Aggregate<E extends Event> {
+export abstract class Aggregate<E extends DomainEvent> {
   private domainEvents: E[] = [];
 
   abstract applyEvent(event: E): void;

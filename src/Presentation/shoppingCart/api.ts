@@ -1,15 +1,15 @@
 import { Request, Response, Router } from "express";
 import { assertNotEmptyString, assertPositiveNumber } from "../validation";
 import { v4 as uuid } from "uuid";
-import { ShoppingCartService } from "Application/ShoppingCartService/ShoppingCartService";
+import { ShoppingCartService } from "command/Application/ShoppingCartService/ShoppingCartService";
 import {
   PricedProductItem,
   ProductItem,
   ShoppingCart,
   ShoppingCartEvent,
-} from "Domain/Aggregate/ShoppingCart/ShoppingCart";
+} from "command/Domain/Aggregate/ShoppingCart/ShoppingCart";
 import { sendCreated } from "Presentation/api";
-import { EventStoreRepository } from "Infrastructure/eventstore/repository";
+import { EventStoreRepository } from "adapter/repository";
 
 export const mapShoppingCartStreamId = (id: string) => `shopping_cart-${id}`;
 

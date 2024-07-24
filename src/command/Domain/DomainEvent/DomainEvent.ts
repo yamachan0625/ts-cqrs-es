@@ -1,4 +1,4 @@
-export type Event<
+export type DomainEvent<
   EventType extends string = string,
   EventData extends Record<string, unknown> = Record<string, unknown>,
 > = Readonly<{

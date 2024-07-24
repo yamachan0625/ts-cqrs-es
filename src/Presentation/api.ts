@@ -1,4 +1,4 @@
-import { EventStoreErrors } from "Infrastructure/eventstore/eventStore";
+import { EventStoreErrors } from "adapter/eventStoreDB/EventStore";
 import express, {
   Application,
   NextFunction,
