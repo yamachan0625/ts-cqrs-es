@@ -1,5 +1,8 @@
-import { DomainEvent } from "../../DomainEvent/DomainEvent";
 import { Aggregate } from "../../Aggregate";
+import {
+  ShoppingCartEvent,
+  ShoppingCartSnapshotted,
+} from "./ShoppingCartEvent";
 import { ShoppingCartErrors } from "./businessLogic";
 
 export interface ProductItem {
@@ -10,54 +13,6 @@ export interface ProductItem {
 export type PricedProductItem = ProductItem & {
   unitPrice: number;
 };
-
-export type ShoppingCartOpened = DomainEvent<
-  "ShoppingCartOpened",
-  {
-    shoppingCartId: string;
-    clientId: string;
-    openedAt: Date;
-  }
->;
-
-export type ProductItemAddedToShoppingCart = DomainEvent<
-  "ProductItemAddedToShoppingCart",
-  {
-    shoppingCartId: string;
-    productItem: PricedProductItem;
-  }
->;
-
-export type ProductItemRemovedFromShoppingCart = DomainEvent<
-  "ProductItemRemovedFromShoppingCart",
-  {
-    shoppingCartId: string;
-    productItem: PricedProductItem;
-  }
->;
-
-export type ShoppingCartConfirmed = DomainEvent<
-  "ShoppingCartConfirmed",
-  {
-    shoppingCartId: string;
-    confirmedAt: Date;
-  }
->;
-
-export type ShoppingCartCanceled = DomainEvent<
-  "ShoppingCartCanceled",
-  {
-    shoppingCartId: string;
-    canceledAt: Date;
-  }
->;
-
-export type ShoppingCartEvent =
-  | ShoppingCartOpened
-  | ProductItemAddedToShoppingCart
-  | ProductItemRemovedFromShoppingCart
-  | ShoppingCartConfirmed
-  | ShoppingCartCanceled;
 
 export enum ShoppingCartStatus {
   Pending = "Pending",
@@ -229,6 +184,16 @@ export class ShoppingCart extends Aggregate<ShoppingCartEvent> {
         this._canceledAt = event.canceledAt;
         return;
       }
+      case "ShoppingCartSnapshotted": {
+        this._id = event.shoppingCartId;
+        this._clientId = event.clientId;
+        this._status = event.status;
+        this._openedAt = event.openedAt;
+        this._confirmedAt = event.confirmedAt;
+        this._canceledAt = event.canceledAt;
+        this._productItems = event.productItems;
+        return;
+      }
       default: {
         throw new Error(ShoppingCartErrors.UNKNOWN_EVENT_TYPE);
       }
@@ -261,11 +226,38 @@ export class ShoppingCart extends Aggregate<ShoppingCartEvent> {
       throw new Error(ShoppingCartErrors.CART_IS_EMPTY);
     }
   };
-}
 
-export const getShoppingCart = (events: ShoppingCartEvent[]): ShoppingCart => {
-  return events.reduce<ShoppingCart>((state, event) => {
-    state.applyEvent(event);
-    return state;
-  }, ShoppingCart.default());
-};
+  public static apply = (events: ShoppingCartEvent[]): ShoppingCart => {
+    return events.reduce<ShoppingCart>((state, event) => {
+      state.applyEvent(event);
+      return state;
+    }, ShoppingCart.default());
+  };
+
+  public static tryBuildSnapshot = (
+    currentEvents: ShoppingCartEvent[],
+    currentEntity: ShoppingCart,
+    newRevision: bigint
+  ): ShoppingCartSnapshotted | undefined => {
+    const eventTypeList = currentEvents.map((event) => event.type);
+    if (eventTypeList.includes("ShoppingCartCanceled")) {
+      return {
+        type: "ShoppingCartSnapshotted",
+        data: {
+          shoppingCartId: currentEntity.id,
+          clientId: currentEntity.clientId,
+          status: currentEntity.status,
+          openedAt: currentEntity.openedAt,
+          confirmedAt: currentEntity.confirmedAt,
+          canceledAt: currentEntity.canceledAt,
+          productItems: currentEntity.productItems,
+        },
+        metadata: {
+          snapshottedStreamRevision: newRevision.toString(),
+        },
+      };
+    }
+
+    return undefined;
+  };
+}

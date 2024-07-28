@@ -7,7 +7,7 @@ export abstract class ApplicationService<Entity> {
     id: string,
     handle: (entity: Entity) => void | Entity
   ) => {
-    const aggregate = await this.repository.find(id);
+    const aggregate = await this.repository.findById(id);
 
     const result = handle(aggregate) ?? aggregate;
 
